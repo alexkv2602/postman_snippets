@@ -1,0 +1,38 @@
+pm.test("The number of likes has increased", function () {
+  const like_count = parseInt(pm.response.json()['data']['like_count'])
+  const likes  = parseInt(pm.environment.get("likes"))
+  // Тут мы утверждаем, что likes должен быть меньше, чем like_count, иначе ошибка, если нужно наоборот - просто поменяй местами переменные
+  pm.expect(like_count).to.be.below(likes, "The number of likes has not increased")
+
+});
+pm.test("Find post into the feed", function () {
+
+
+  const jsonData = pm.response.json();
+
+    var test1 = pm.variables.get("idPost");
+    var test2 = pm.globals.get("idPost");
+    var test3 = pm.collectionVariables.get("idPost");
+    var test4 = pm.environment.get("idPost");
+    var test5 = pm.iterationData.get("idPost");
+    var test6 = postman.getEnvironmentVariable("idPost");
+    var test7 = postman.getGlobalVariable("idPost");
+    var test9 = pm.variables.idPost;
+
+    console.log(`test1: ${test1}`)
+    console.log(`test2: ${test2}`)
+    console.log(`test3: ${test3}`)
+    console.log(`test4: ${test4}`)
+    console.log(`test5: ${test5}`)
+    console.log(`test6: ${test6}`)
+    console.log(`test7: ${test7}`)
+    console.log(`test9: ${test9}`)
+
+
+
+
+
+
+  const post = jsonData.find(post => post.id === newPostId);
+  pm.expect(post).to.be.an("object", "Could not find the new post into feed");
+});
