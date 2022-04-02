@@ -36,3 +36,75 @@ pm.test("Find post into the feed", function () {
   const post = jsonData.find(post => post.id === newPostId);
   pm.expect(post).to.be.an("object", "Could not find the new post into feed");
 });
+
+
+ // Собираем данные с ответа
+const jsonData = pm.response.json().data.media_objects;
+// Захватываем переменную из окружения
+const storyMediaStr = pm.variables.get("storyMedia_objects")
+// Создаем массив из строки, где каждая цифра разделена запятой
+const storyMediaArr = storyMediaStr.split(',')
+
+// Тест на код 200
+pm.test("Проверяем код 200", () => {
+  pm.response.to.have.status(200);
+});
+// Тест на пусторй массив в ответе
+pm.test("Проверяем, вдруг мы получили пустой массиив", () => {
+  pm.expect(jsonData).to.be.an('array').not.to.be.empty;
+});
+// Тест на наличия поля id в ответе
+pm.test("Проверяем, есть ли в нашем массиве поле ID. Достаточно проверить первый элемент массива", () => {
+  pm.expect(jsonData[0]).have.property('id');
+});
+
+pm.test("Проверяем, пустая ли переменная в окружении", () =>  {
+  pm.expect(storyMediaArr).to.be.an('array').not.to.be.empty;
+});
+
+// Далее идет освновной тест. То, что выше, кроме обозначения переменных, так, для подстраховки, можешь добавлять, можешь не добавлять. Но если напрмиер массив окажется пустым, или в нем не будет поля id может выскачить неожиданная ошибка
+pm.test("Название основного теста", () =>  {
+  // Начинаем искать по массиву ответа, и теперь при каждой итерации mediaObjects начинает быть равной следующему элементу массива
+  jsonData.find(mediaObjects => {
+    // Далее мы запускаем еще один цикл. На этот раз по массиву из окружения. и теперь каждый элемент id равен следующему значениею из переменной окружения при каждой итерации, а константа finded становится числом. Если она пустая - ошибку выкидываем
+    const finded = parseInt(storyMediaArr.find(id => parseInt(id) === parseInt(mediaObjects.id)))
+    pm.expect(finded).to.be.a("number", `Не найден id: ${mediaObjects.id}`);
+  });
+
+});
+
+
+ // Собираем данные с ответа
+const jsonData = pm.response.json().data.media_objects;
+// Захватываем переменную из окружения
+const storyMediaStr = pm.variables.get("storyMedia_objects")
+// Создаем массив из строки, где каждая цифра разделена запятой
+const storyMediaArr = storyMediaStr.split(',')
+
+// Тест на код 200
+pm.test("Проверяем код 200", () => {
+  pm.response.to.have.status(200);
+});
+// Тест на пусторй массив в ответе
+pm.test("Проверяем, вдруг мы получили пустой массиив", () => {
+  pm.expect(jsonData).to.be.an('array').not.to.be.empty;
+});
+// Тест на наличия поля id в ответе
+pm.test("Проверяем, есть ли в нашем массиве поле ID. Достаточно проверить первый элемент массива", () => {
+  pm.expect(jsonData[0]).have.property('id');
+});
+
+pm.test("Проверяем, пустая ли переменная в окружении", () =>  {
+  pm.expect(storyMediaArr).to.be.an('array').not.to.be.empty;
+});
+
+// Далее идет освновной тест. То, что выше, кроме обозначения переменных, так, для подстраховки, можешь добавлять, можешь не добавлять. Но если напрмиер массив окажется пустым, или в нем не будет поля id может выскачить неожиданная ошибка
+pm.test("Название основного теста", () =>  {
+  // Начинаем искать по массиву ответа, и теперь при каждой итерации mediaObjects начинает быть равной следующему элементу массива
+  jsonData.find(mediaObjects => {
+    // Далее мы запускаем еще один цикл. На этот раз по массиву из окружения. и теперь каждый элемент id равен следующему значениею из переменной окружения при каждой итерации, а константа finded становится числом. Если она пустая - ошибку выкидываем
+    const finded = storyMediaArr.find(id => parseInt(id) === parseInt(mediaObjects.id))
+    pm.expect(finded, `Не найден id: ${mediaObjects.id}`).to.not.be.undefined
+  });
+
+})
